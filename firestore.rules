@@ -1,0 +1,250 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny all access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Reusable Primitives ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isBoundedString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isStringList(listVal, maxItems) {
+      return listVal is list
+        && listVal.size() <= maxItems
+        && (listVal.size() == 0 || listVal[0] is string);
+    }
+
+    function isProductList(listVal, maxItems) {
+      return listVal is list
+        && listVal.size() <= maxItems
+        && (listVal.size() == 0 || (
+          listVal[0] is map
+          && listVal[0].keys().hasAll(['id', 'name', 'category'])
+          && listVal[0].keys().hasOnly(['id', 'name', 'category', 'notes'])
+          && isBoundedString(listVal[0].id, 1, 64)
+          && isBoundedString(listVal[0].name, 1, 100)
+          && isBoundedString(listVal[0].category, 1, 40)
+          && (!('notes' in listVal[0]) || isBoundedString(listVal[0].notes, 0, 200))
+        ));
+    }
+
+    // --- Validation Blueprints ---
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll(['uid', 'name', 'email', 'onboardingCompleted', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly([
+          'uid', 'name', 'email', 'ageRange', 'location',
+          'skinType', 'hairType', 'makeupPreference', 'beautyConcerns',
+          'budgetPreference', 'existingProducts', 'productPreferences',
+          'onboardingCompleted', 'createdAt', 'updatedAt'
+        ])
+        && data.uid == userId
+        && isValidId(data.uid)
+        && isBoundedString(data.name, 1, 100)
+        && isBoundedString(data.email, 3, 160)
+        && data.onboardingCompleted is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp
+        && (!('ageRange' in data) || isBoundedString(data.ageRange, 0, 40))
+        && (!('location' in data) || isBoundedString(data.location, 0, 120))
+        && (!('skinType' in data) || isBoundedString(data.skinType, 0, 40))
+        && (!('hairType' in data) || isBoundedString(data.hairType, 0, 80))
+        && (!('makeupPreference' in data) || isBoundedString(data.makeupPreference, 0, 40))
+        && (!('beautyConcerns' in data) || isStringList(data.beautyConcerns, 15))
+        && (!('budgetPreference' in data) || isBoundedString(data.budgetPreference, 0, 40))
+        && (!('existingProducts' in data) || isProductList(data.existingProducts, 40))
+        && (!('productPreferences' in data) || isBoundedString(data.productPreferences, 0, 500));
+    }
+
+    function isValidRescuePlan(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'title', 'occasion', 'concerns',
+          'availableTime', 'availableMinutes', 'situation', 'generatedPlan', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'title', 'occasion', 'concerns', 'customConcern',
+          'availableTime', 'availableMinutes', 'situation', 'generatedPlan',
+          'feedbackRating', 'createdAt'
+        ])
+        && data.userId == userId
+        && isValidId(data.userId)
+        && isBoundedString(data.title, 1, 160)
+        && isBoundedString(data.occasion, 1, 120)
+        && isStringList(data.concerns, 20)
+        && (!('customConcern' in data) || isBoundedString(data.customConcern, 0, 400))
+        && isBoundedString(data.availableTime, 1, 40)
+        && data.availableMinutes is number && data.availableMinutes >= 1 && data.availableMinutes <= 120
+        && data.situation is map
+        && data.situation.keys().hasOnly([
+          'environment', 'weather', 'awayFromHome', 'washroomAccess', 'hasProducts', 'productSource'
+        ])
+        && (!('environment' in data.situation) || isBoundedString(data.situation.environment, 0, 60))
+        && (!('weather' in data.situation) || isBoundedString(data.situation.weather, 0, 60))
+        && (!('awayFromHome' in data.situation) || data.situation.awayFromHome is bool)
+        && (!('washroomAccess' in data.situation) || data.situation.washroomAccess is bool)
+        && (!('hasProducts' in data.situation) || data.situation.hasProducts is bool)
+        && (!('productSource' in data.situation) || isBoundedString(data.situation.productSource, 1, 20))
+        && data.generatedPlan is map
+        && data.generatedPlan.keys().hasAll([
+          'situationSummary', 'steps', 'quickFixes', 'productsThatMayHelp',
+          'whatToAvoid', 'timeBreakdown', 'finalTip'
+        ])
+        && data.generatedPlan.keys().hasOnly([
+          'situationSummary', 'steps', 'quickFixes', 'productsThatMayHelp',
+          'whatToAvoid', 'timeBreakdown', 'finalTip', 'professionalNote'
+        ])
+        && isBoundedString(data.generatedPlan.situationSummary, 1, 1200)
+        && data.generatedPlan.steps is list && data.generatedPlan.steps.size() >= 1 && data.generatedPlan.steps.size() <= 15
+        && data.generatedPlan.quickFixes is list && data.generatedPlan.quickFixes.size() <= 10
+        && data.generatedPlan.productsThatMayHelp is list && data.generatedPlan.productsThatMayHelp.size() <= 10
+        && data.generatedPlan.whatToAvoid is list && data.generatedPlan.whatToAvoid.size() <= 10
+        && data.generatedPlan.timeBreakdown is map
+        && isBoundedString(data.generatedPlan.finalTip, 1, 600)
+        && (!('professionalNote' in data.generatedPlan) || isBoundedString(data.generatedPlan.professionalNote, 0, 500))
+        && (!('feedbackRating' in data) || data.feedbackRating == null || (data.feedbackRating is number && data.feedbackRating >= 1 && data.feedbackRating <= 5))
+        && data.createdAt is timestamp;
+    }
+
+    function isValidFeedback(data, userId) {
+      return data.keys().hasAll([
+          'userId', 'planId', 'usefulness', 'relevance', 'easeOfUse', 'timeFit', 'reuseIntent', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'planId', 'usefulness', 'relevance', 'easeOfUse',
+          'timeFit', 'reuseIntent', 'writtenFeedback', 'createdAt'
+        ])
+        && data.userId == userId
+        && isValidId(data.userId)
+        && isValidId(data.planId)
+        && data.usefulness is number && data.usefulness >= 1 && data.usefulness <= 5
+        && data.relevance is number && data.relevance >= 1 && data.relevance <= 5
+        && data.easeOfUse is number && data.easeOfUse >= 1 && data.easeOfUse <= 5
+        && data.timeFit is bool
+        && isBoundedString(data.reuseIntent, 1, 40)
+        && (!('writtenFeedback' in data) || isBoundedString(data.writtenFeedback, 0, 1000))
+        && data.createdAt is timestamp;
+    }
+
+    function isValidPricingResponse(data, userId) {
+      return data.keys().hasAll(['userId', 'proposedPrice', 'willingnessToPay', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'proposedPrice', 'willingnessToPay', 'response', 'createdAt'])
+        && data.userId == userId
+        && isValidId(data.userId)
+        && data.proposedPrice == 99
+        && isBoundedString(data.willingnessToPay, 1, 40)
+        && (!('response' in data) || isBoundedString(data.response, 0, 600))
+        && data.createdAt is timestamp;
+    }
+
+    // --- User Profile Collection ---
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          // Action: Update beauty profile or onboarding preferences
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'name', 'ageRange', 'location', 'skinType', 'hairType',
+            'makeupPreference', 'beautyConcerns', 'budgetPreference',
+            'existingProducts', 'productPreferences', 'onboardingCompleted', 'updatedAt'
+          ])
+        );
+
+      allow delete: if false;
+
+      // --- Saved Beauty Rescue Plans ---
+      match /plans/{planId} {
+        allow get: if isValidId(userId) && isValidId(planId) && isOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && existing().userId == request.auth.uid;
+
+        allow create: if isValidId(userId)
+          && isValidId(planId)
+          && isOwner(userId)
+          && isValidRescuePlan(incoming(), userId)
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/users/$(userId));
+
+        allow update: if isValidId(userId)
+          && isValidId(planId)
+          && isOwner(userId)
+          && isValidRescuePlan(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && (
+            // Action: Rate plan helpfulness
+            incoming().diff(existing()).affectedKeys().hasOnly(['feedbackRating'])
+          );
+
+        allow delete: if isValidId(userId) && isValidId(planId) && isOwner(userId);
+      }
+
+      // --- Pilot Validation Feedback ---
+      match /feedback/{feedbackId} {
+        allow get: if isValidId(userId) && isValidId(feedbackId) && isOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && existing().userId == request.auth.uid;
+
+        allow create: if isValidId(userId)
+          && isValidId(feedbackId)
+          && isOwner(userId)
+          && isValidFeedback(incoming(), userId)
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/users/$(userId));
+
+        allow update: if false;
+        allow delete: if false;
+      }
+
+      // --- Willingness-to-Pay Validation Responses ---
+      match /pricingResponses/{responseId} {
+        allow get: if isValidId(userId) && isValidId(responseId) && isOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && existing().userId == request.auth.uid;
+
+        allow create: if isValidId(userId)
+          && isValidId(responseId)
+          && isOwner(userId)
+          && isValidPricingResponse(incoming(), userId)
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/users/$(userId));
+
+        allow update: if false;
+        allow delete: if false;
+      }
+    }
+  }
+}

@@ -1,0 +1,915 @@
+# MASTER APP-BUILDING PROMPT: GLAMGUARD
+## Complete Beauty-Tech MVP | Firebase + Gemini AI | GitHub + Vercel
+
+Act as an expert product designer, UI/UX designer, branding specialist and full-stack application developer.
+
+Build a complete, polished, responsive and functional web application for my beauty-tech startup, **GlamGuard**.
+
+I am a non-technical founder. I want Google AI Studio to generate the application and its implementation automatically. Do not ask me to manually write JavaScript, React, CSS, SQL or other code. Explain only the setup steps that genuinely require my involvement, using simple, click-by-click instructions.
+
+This must be a functional application, not just a visual prototype.
+
+The application must be compatible with the following workflow:
+
+**Google AI Studio → GitHub → Vercel**
+
+Use **Firebase Authentication and Cloud Firestore** for the backend and **Gemini AI** for generating personalized Beauty Rescue Plans.
+
+Do not use Supabase anywhere in this project.
+
+---
+
+# 1. ABOUT GLAMGUARD
+
+GlamGuard is a personalized, situation-based beauty assistant designed initially for women aged 18–30 in Kolkata, especially college students and young working women.
+
+### The problem
+
+Women often struggle to maintain their makeup, skin and hair during long outings, commutes, festivals, weddings and social events.
+
+Kolkata's heat and humidity can cause:
+
+- Makeup to melt or become patchy.
+- Skin to look excessively oily.
+- Hair to become frizzy or untidy.
+- Skin to look dull or tired.
+- Makeup to lose its freshness during long days.
+
+Users may not know which of their existing products to use, what quick solution will help, or how to fix the problem when they have very little time.
+
+### GlamGuard's solution
+
+Users describe their current situation, occasion, available time, beauty concern, preferences and products they already own.
+
+GlamGuard generates a personalized **Beauty Rescue Plan** containing:
+
+- Practical step-by-step solutions.
+- Quick beauty fixes.
+- Makeup, skincare and haircare suggestions.
+- Affordable optional product recommendations.
+- Time estimates for every step.
+- Suggestions based on the user's existing products and preferences.
+
+The experience should feel like having a knowledgeable beauty assistant available whenever a beauty problem occurs.
+
+The central purpose of GlamGuard is to help users look and feel presentable during real-life situations without requiring expensive products or salon appointments.
+
+# 2. BRAND IDENTITY AND DESIGN SYSTEM
+
+Create a distinctive and memorable visual identity.
+
+The app must look like a premium beauty-tech startup rather than a generic dashboard template.
+
+### Official brand colours
+
+Use exactly two signature brand colours:
+
+1. Raspberry Pink — #E84D79
+2. Deep Plum — #38243E
+
+Use Raspberry Pink for:
+
+- Primary action buttons.
+- Important highlights.
+- Active navigation indicators.
+- Selected form options.
+- Progress indicators.
+- Small decorative accents.
+- Important call-to-action elements.
+
+Use Deep Plum for:
+
+- Main headings.
+- Navigation text.
+- Important labels.
+- Icons.
+- Dark backgrounds.
+- Strong contrast sections.
+
+White and very light neutral backgrounds are allowed for readability. They are supporting neutrals, not additional signature colours.
+
+Do not introduce unrelated bright colours, rainbow gradients or multiple accent colours.
+
+### Typography: Make GlamGuard's font distinctive
+
+Typography is a major part of the brand identity.
+
+Use the following font pairing:
+
+**Primary display font: Fraunces**
+- Use Fraunces for the GlamGuard wordmark, large landing-page headlines, expressive section headings and selected editorial-style text.
+- Choose an elegant but noticeable weight.
+- Use it to create a premium, beauty-editorial appearance.
+- The GlamGuard brand name should feel distinctive and memorable.
+
+**Secondary interface font: Inter**
+- Use Inter for body text, navigation, buttons, labels, forms, cards, descriptions and all functional interface content.
+- Use suitable font weights such as 400, 500, 600 and 700.
+- Maintain excellent readability on mobile and desktop.
+
+Use a consistent typography hierarchy:
+- Brand wordmark: expressive Fraunces.
+- Main hero headline: Fraunces.
+- Section headings: Fraunces or a coordinated display style.
+- Card headings: Inter semibold.
+- Body content: Inter regular.
+- Buttons and labels: Inter medium or semibold.
+
+Load fonts using a reliable web font method and include sensible fallback fonts. Ensure the application still displays correctly if an external font cannot load.
+
+Do not use too many different typefaces.
+
+### Overall design personality
+
+The application should feel:
+
+- Premium and sophisticated.
+- Feminine without looking childish.
+- Youthful, modern and stylish.
+- Editorial and beauty-lifestyle oriented.
+- Clean, welcoming and easy to navigate.
+- Visually interesting without being cluttered.
+
+Use:
+- Generous spacing.
+- Beautiful rounded cards.
+- Subtle shadows.
+- Elegant borders.
+- Clean icons.
+- Carefully selected imagery.
+- Smooth but restrained transitions.
+- Consistent button styles.
+- Beautiful empty states.
+- Attractive loading states.
+
+Avoid:
+- Generic SaaS dashboard designs.
+- Excessive gradients.
+- Cartoon illustrations.
+- Overly decorative layouts.
+- Too many floating elements.
+- Tiny text.
+- Excessive animations.
+
+Use a consistent design system across every page.
+
+# 3. TARGET USERS AND LOCAL CONTEXT
+
+The initial target audience is women aged 18–30 in Kolkata, especially:
+
+- Female college students.
+- Young working women.
+- Women who attend social events.
+- Women who frequently travel or commute.
+- Women attending festivals, weddings and celebrations.
+
+Make recommendations relevant to:
+
+- Kolkata's heat and humidity.
+- Long college and office days.
+- Daily commutes.
+- Durga Puja celebrations.
+- Weddings and wedding functions.
+- College festivals.
+- Parties and night outs.
+- Shopping trips.
+- Outdoor social occasions.
+
+Prioritize affordable, practical and accessible solutions.
+
+Do not assume that every user owns expensive beauty products.
+
+# 4. MAIN APPLICATION NAVIGATION
+
+Create four primary navigation sections:
+
+1. Home
+2. Beauty Rescue Plan
+3. My Plans
+4. My Beauty Profile
+
+Desktop:
+- Use an elegant top navigation or clean sidebar.
+- Keep the GlamGuard wordmark visible.
+- Provide an easy-to-find profile and logout option.
+
+Mobile:
+- Use a clean bottom navigation bar where appropriate.
+- Make buttons and form elements easy to tap.
+- Avoid overcrowding the screen.
+
+Do not add unnecessary navigation sections.
+
+# 5. LANDING PAGE AND WELCOME EXPERIENCE
+
+Create an attractive, premium landing page that immediately communicates what GlamGuard does.
+
+Include:
+
+- GlamGuard wordmark.
+- A beautiful hero section.
+- Main headline: "Your Beauty Emergency? We've Got You."
+- Supporting line: "Personalized beauty rescue plans for your skin, hair and makeup, whenever you need them."
+- Primary CTA: "Get My Beauty Rescue Plan".
+- Secondary CTA: "How It Works".
+- Sign-up and login options.
+
+Create a visually interesting hero area using premium beauty-lifestyle imagery or elegant design elements.
+
+Include a How It Works section with three steps:
+
+1. Tell us your beauty concern.
+2. Share your occasion and available time.
+3. Get your personalized rescue plan.
+
+Include common beauty situations:
+- Makeup melting during a long outing.
+- Oily-looking skin after college.
+- Frizzy hair in humid weather.
+- Dull-looking skin before an event.
+- Last-minute makeup touch-ups.
+
+Include a section explaining that GlamGuard focuses on quick, practical and affordable solutions.
+
+The landing page should look like a real startup website, not a generic template.
+
+# 6. USER AUTHENTICATION — FIREBASE
+
+Use Firebase Authentication.
+
+Implement:
+
+- Sign-up with name, email and password.
+- Login with email and password.
+- Logout.
+- Forgot-password functionality.
+- Password-reset email flow.
+- Form validation.
+- Clear success and error messages.
+- Protected application pages.
+- Persistent login sessions.
+
+Use Firebase Authentication with email and password.
+
+If the Firebase project or authentication provider requires manual configuration, explain the steps clearly.
+
+Never allow a user to view another user's private profile, saved plans or feedback.
+
+After successful registration, take the user to onboarding.
+
+After successful login, take the user to their dashboard.
+
+# 7. FIRST-TIME USER ONBOARDING
+
+Create a short, attractive onboarding experience.
+
+Collect the information needed for personalized beauty recommendations.
+
+Allow users to skip questions they do not know or do not want to answer.
+
+### Basic information
+- Name.
+- Age range.
+- Location or area in Kolkata.
+
+### Beauty preferences
+- Skin type: oily, dry, combination, normal or sensitive.
+- Hair type or texture.
+- Makeup preference: minimal, natural, everyday, glam or no makeup.
+- Main beauty concerns.
+- Preferred beauty-product budget: affordable, moderate or flexible.
+- Product preferences and sensitivities the user chooses to disclose.
+
+### Existing products
+
+Allow users to enter products they already own, such as:
+
+- Moisturizer.
+- Sunscreen.
+- Face powder.
+- Compact.
+- Lipstick or lip tint.
+- Setting spray.
+- Hair serum.
+- Dry shampoo.
+- Other makeup, skincare or haircare products.
+
+Allow users to add, edit and remove products.
+
+Save all information in the user's Firebase profile.
+
+Allow users to edit their preferences later.
+
+Important: These are user-provided preferences and concerns. Do not present them as medical assessments or AI skin diagnoses.
+
+# 8. HOME DASHBOARD
+
+Create a personalized dashboard after login.
+
+Include:
+
+- Friendly greeting using the user's first name.
+- Short welcome message.
+- Prominent "Create a Beauty Rescue Plan" button.
+- Section titled "What are you dealing with today?"
+- Attractive quick situation cards.
+
+Quick situation cards:
+
+1. My makeup is melting.
+2. My skin is looking oily.
+3. My hair is getting frizzy.
+4. My skin looks dull or tired.
+5. I need a quick refresh before an event.
+6. I have very little time to get ready.
+
+When a user selects a situation card, take them to the Beauty Rescue Plan form with the relevant concern already selected.
+
+Also display:
+
+- Recently generated plans.
+- A small Beauty Profile summary.
+- A useful beauty tip related to the user's concern or Kolkata's climate.
+- A clear link to My Plans.
+
+Keep the dashboard focused on the main feature.
+
+# 9. CORE FEATURE — PERSONALIZED BEAUTY RESCUE PLAN
+
+This is the most important feature of GlamGuard.
+
+Prioritize its functionality and quality above decorative secondary features.
+
+Create an attractive guided form.
+
+### STEP A: Select the occasion
+
+Offer:
+
+- College or university day.
+- Office or workday.
+- Durga Puja.
+- Wedding or wedding function.
+- Party or night out.
+- Shopping or outdoor outing.
+- Casual day out.
+- Special event.
+- Other.
+
+Allow users to enter a custom occasion.
+
+### STEP B: Select the beauty concern
+
+Allow multiple selections where appropriate.
+
+Makeup concerns:
+- Makeup melting.
+- Foundation looking patchy.
+- Makeup becoming oily or shiny.
+- Lipstick fading.
+- Makeup looking dull.
+- Need for a quick touch-up.
+
+Skin concerns:
+- Excessive oiliness.
+- Dryness.
+- Dull-looking skin.
+- Skin feeling sweaty.
+- Need for a quick freshening-up routine.
+- Other self-reported concern.
+
+Hair concerns:
+- Frizzy hair.
+- Flat or lifeless hair.
+- Untidy hairstyle.
+- Excessive oiliness.
+- Hair losing its shape.
+- Other self-reported concern.
+
+Provide a free-text field for custom concerns.
+
+### STEP C: Available time
+
+Offer:
+
+- 5 minutes.
+- 10 minutes.
+- 15 minutes.
+- 20 minutes.
+- 30 minutes.
+- More than 30 minutes.
+
+The generated plan must strictly respect the selected time.
+
+Never recommend a routine that exceeds the available time.
+
+### STEP D: Current situation
+
+Ask optional questions:
+
+- Is the user indoors or outdoors?
+- Is the weather hot or humid?
+- Is the user away from home?
+- Does the user have access to a washroom or mirror?
+- Does the user have beauty products with them?
+
+### STEP E: Product availability
+
+Ask whether recommendations should use:
+
+- Products the user already owns.
+- Affordable products they could consider.
+- A combination of both.
+
+Prefill saved profile information but allow changes for each plan.
+
+### STEP F: Generate the plan
+
+Use Gemini AI to generate the personalized Beauty Rescue Plan.
+
+Consider:
+
+- Occasion.
+- Available time.
+- User's self-reported concerns.
+- Makeup preferences.
+- Existing products.
+- Product budget.
+- Kolkata's heat and humidity.
+- Indoor, outdoor or travelling situation.
+- Practicality and ease of following the steps.
+
+Do not generate generic advice that ignores the user's answers.
+
+Show an attractive loading experience while the AI generates the plan.
+
+# 10. BEAUTY RESCUE PLAN RESULTS PAGE
+
+Present results in a beautiful and easy-to-follow layout.
+
+Every plan must contain:
+
+### A. Your Situation
+
+Summarize the user's concern and current situation.
+
+### B. Your Personalized Rescue Plan
+
+Provide clear, numbered steps in the correct order.
+
+Each step must include:
+- What to do.
+- How to do it.
+- Which product or item to use, if relevant.
+- Approximate time required.
+- Why the step helps.
+
+### C. Quick Fixes
+
+Provide practical emergency solutions that can be performed quickly.
+
+Prioritize products the user already owns.
+
+### D. Products That May Help
+
+Suggest affordable skincare, makeup or haircare products only when relevant.
+
+For each suggestion include:
+- Product type.
+- Why it may help.
+- Affordability category or price range, when reliable.
+- Whether it is optional or already owned by the user.
+
+Do not turn this section into a shopping catalogue.
+
+Do not invent product prices, product availability or claims.
+
+### E. What to Avoid
+
+Mention relevant mistakes or actions that could worsen the concern.
+
+### F. Time Breakdown
+
+Show:
+- Time for each step.
+- Total estimated time.
+- A clear indication that the plan fits the selected time.
+
+The total must never exceed the user's available time.
+
+### G. Final Beauty Tip
+
+Provide one useful tip related to the occasion or situation.
+
+### H. Plan Actions
+
+Include functional buttons:
+
+- Save This Plan.
+- Generate Another Plan.
+- Return to Dashboard.
+
+Allow users to rate whether the plan was helpful.
+
+All buttons must work.
+
+# 11. GEMINI AI PERSONALIZATION AND SAFETY
+
+Use Gemini AI for generating Beauty Rescue Plans.
+
+The AI should behave like a knowledgeable, practical beauty assistant.
+
+It must:
+
+- Use the user's actual form answers.
+- Use saved profile preferences when available.
+- Prioritize existing products.
+- Suggest affordable alternatives when appropriate.
+- Give concise, actionable instructions.
+- Respect the user's time limit.
+- Avoid unnecessary product recommendations.
+- Clearly distinguish existing products from optional purchases.
+- Consider the user's occasion and current environment.
+- Avoid medical claims and diagnosis.
+- Recommend professional advice for serious or persistent skin concerns.
+
+Do not:
+- Diagnose skin conditions.
+- Claim to identify skin problems from facial images.
+- Recommend unsafe DIY treatments.
+- Invent product prices.
+- Assume products are owned when they have not been listed.
+- Produce a plan that exceeds the selected time.
+
+Use a secure server-side Gemini API integration.
+
+Never expose a private Gemini API key in frontend code or publicly accessible files.
+
+For deployment, ensure the Gemini integration can run through a secure server-side API route or equivalent backend function compatible with Vercel.
+
+If the AI request fails, show a helpful error message and allow the user to retry.
+
+# 12. KOLKATA-SPECIFIC PERSONALIZATION
+
+Make recommendations sensitive to Kolkata's climate and lifestyle.
+
+Examples:
+
+- Makeup melting during a humid Durga Puja outing.
+- Frizzy hair after travelling.
+- Oily-looking skin after a long college day.
+- A quick refresh before a wedding function.
+- Maintaining a presentable appearance during a long office day.
+- Touch-ups while away from home.
+
+Do not assume the weather is always the same.
+
+Use the user's description of the conditions unless reliable live weather information is actually integrated.
+
+# 13. NEARBY BEAUTY SERVICE SUGGESTIONS
+
+Where relevant, allow the app to suggest nearby beauty service points or partner salons.
+
+This is informational only.
+
+Include when verified:
+- Salon or business name.
+- General service category.
+- Area or location.
+- Contact or website information.
+
+Let users enter their area manually.
+
+Do not implement:
+- Live GPS tracking.
+- Real-time salon booking.
+- Appointment scheduling.
+- Payment functionality.
+
+Never fabricate salon names, addresses or contact details.
+
+If verified information is unavailable, clearly say so.
+
+# 14. MY PLANS — SAVED BEAUTY RESCUE PLANS
+
+Create a section where users can access previously generated plans.
+
+Show:
+- Plan title or main concern.
+- Occasion.
+- Date generated.
+- Main beauty concern.
+- Option to reopen the full plan.
+- Option to delete a plan after confirmation.
+
+Only show the signed-in user's own plans.
+
+Saved plans must remain available after logout and login.
+
+Use Firestore persistent storage, not temporary browser storage.
+
+# 15. MY BEAUTY PROFILE
+
+Create an editable profile page.
+
+Include:
+- Name and email.
+- Kolkata area or location.
+- Skin type, if provided.
+- Hair type, if provided.
+- Makeup preference.
+- Beauty concerns.
+- Budget preference.
+- Existing products.
+- Product preferences and sensitivities.
+
+Allow users to edit and save changes.
+
+Do not require every field to be completed.
+
+# 16. FEEDBACK AND USER VALIDATION
+
+After generating a plan, allow users to provide feedback.
+
+Ask:
+
+- Was this plan useful?
+- Were the recommendations relevant?
+- Was the plan easy to follow?
+- Did it fit your available time?
+- Would you use GlamGuard again?
+- What would you improve?
+
+Include a simple rating scale and optional written feedback.
+
+Store feedback securely in Firestore.
+
+Make feedback easy to review during the pilot.
+
+# 17. FREEMIUM AND PREMIUM PRESENTATION
+
+GlamGuard follows a proposed Freemium + Paid business model.
+
+Display the proposed premium price:
+
+**₹99 per month**
+
+Create a simple pricing or upgrade section explaining the proposed premium offering.
+
+Ask users whether they would consider paying ₹99 per month for continued personalized beauty guidance.
+
+This is a willingness-to-pay validation feature only.
+
+Do not implement:
+- Payment gateways.
+- Actual paid subscription billing.
+- Paid checkout.
+
+Clearly label the price as proposed or being tested.
+
+Do not invent premium features outside the current project scope.
+
+# 18. FIREBASE BACKEND AND DATABASE
+
+Use Firebase as the only application backend.
+
+Do not use Supabase.
+
+Use:
+
+**Firebase Authentication**
+- Sign-up.
+- Login.
+- Logout.
+- Password reset.
+- User session management.
+
+**Cloud Firestore**
+- User profiles.
+- Beauty preferences.
+- Existing products.
+- Generated Beauty Rescue Plans.
+- User feedback.
+- Pricing and willingness-to-pay responses.
+
+Suggested Firestore structure:
+
+users/{userId}
+- name
+- email
+- ageRange
+- location
+- skinType
+- hairType
+- makeupPreference
+- beautyConcerns
+- budgetPreference
+- existingProducts
+- productPreferences
+- createdAt
+- updatedAt
+
+users/{userId}/plans/{planId}
+- title
+- occasion
+- concerns
+- availableTime
+- situation
+- generatedPlan
+- createdAt
+- feedbackRating
+
+users/{userId}/feedback/{feedbackId}
+- planId
+- usefulness
+- relevance
+- easeOfUse
+- timeFit
+- reuseIntent
+- writtenFeedback
+- createdAt
+
+users/{userId}/pricingResponses/{responseId}
+- proposedPrice
+- willingnessToPay
+- response
+- createdAt
+
+Use secure Firestore rules.
+
+Users must only be able to access their own private records.
+
+Validate authentication and authorization.
+
+Do not expose service-account credentials or private API keys in frontend code.
+
+Use persistent cloud storage.
+
+Do not use localStorage or sessionStorage as the permanent database.
+
+If local storage is used for temporary interface preferences, it must not replace Firebase.
+
+Provide clear setup instructions if Firebase credentials or project configuration are required.
+
+# 19. GOOGLE AI STUDIO, GITHUB AND VERCEL DEPLOYMENT
+
+The application must be developed with the following exact workflow:
+
+**Stage 1: Google AI Studio**
+- Generate the complete application.
+- Generate the interface and functionality.
+- Connect Firebase Authentication and Cloud Firestore.
+- Integrate Gemini AI securely.
+- Test the application in preview mode.
+
+**Stage 2: GitHub**
+- Make the complete source project exportable to GitHub.
+- Support connection to my GitHub account.
+- Use a repository named GlamGuard.
+- Include all source files, dependencies and configuration files.
+- Include a README.md with beginner-friendly instructions.
+- Include a suitable .gitignore.
+- Never commit secret keys, service-account files or environment files containing real credentials.
+
+**Stage 3: Vercel**
+- Make the project compatible with Vercel deployment from GitHub.
+- Include the necessary framework and build configuration.
+- Ensure the production build works outside Google AI Studio.
+- Ensure application routing works after page refreshes.
+- Ensure all server-side AI functionality works in production.
+- Support Vercel environment variables.
+- Do not make the deployed application dependent on the AI Studio preview environment.
+
+**Stage 4: Production configuration**
+
+Prepare a clear list of required environment variable names.
+
+Include a safe `.env.example` file without real credentials.
+
+Use server-side environment variables for private Gemini API keys and any privileged server-side Firebase credentials.
+
+If Firebase client configuration is used in the frontend, configure it appropriately and enforce access through Firebase Authentication and Firestore Security Rules.
+
+For server-side privileged Firebase operations, use secure Vercel environment variables and never expose private credentials.
+
+Explain how to:
+- Add environment variables in Vercel.
+- Configure Firebase Authentication's authorized domains for the production domain.
+- Verify Firestore permissions.
+- Redeploy after configuration changes.
+
+Do not invent actual credentials or claim that deployment has already happened.
+
+# 20. RESPONSIVE DESIGN AND FUNCTIONALITY
+
+Build a mobile-first responsive web application that also works beautifully on desktop.
+
+Test:
+- Mobile screens.
+- Tablet screens.
+- Desktop screens.
+
+Ensure:
+- All buttons work.
+- Forms validate correctly.
+- Navigation works.
+- Authentication works.
+- User information saves correctly.
+- Beauty Rescue Plans generate using Gemini.
+- Saved plans can be reopened.
+- Feedback is stored.
+- Profile updates persist.
+- Loading states work.
+- Error states are clear.
+- Empty states are attractive.
+- Users cannot access another user's private information.
+- No buttons are decorative or non-functional.
+
+Do not leave placeholder screens or fake functionality.
+
+# 21. STRICT MVP SCOPE — FEATURES NOT TO BUILD
+
+The following features are explicitly outside the current MVP and must not be implemented:
+
+- AI-based skin diagnosis.
+- Selfie-based skin analysis.
+- Facial scanning.
+- Virtual makeup try-on.
+- Personalized product purchasing.
+- E-commerce catalogue or shopping cart.
+- Product checkout.
+- Product delivery.
+- Payment gateway.
+- Actual paid subscription billing.
+- Real-time salon booking.
+- Appointment scheduling.
+- Live GPS tracking.
+- Native iOS or Android applications.
+- Advanced loyalty or rewards systems.
+
+Do not add features simply because they are common in other beauty applications.
+
+Keep the focus on the personalized, situation-based Beauty Rescue Plan.
+
+# 22. MVP VALIDATION GOALS
+
+Build GlamGuard to help test these assumptions:
+
+- At least 50 target users should be able to test the MVP.
+- At least 15 out of 50 users should use the personalized Beauty Rescue Plan.
+- At least 30% of pilot users should indicate willingness to pay ₹99 per month.
+- Collect feedback about usefulness, relevance, repeat usage and satisfaction.
+
+Make the application easy to test with real users and easy to improve.
+
+# 23. FINAL QUALITY CHECK
+
+Before considering the application complete, test the complete user journey:
+
+1. Open the landing page.
+2. Register a new user.
+3. Complete onboarding.
+4. Open the dashboard.
+5. Generate a Beauty Rescue Plan.
+6. Verify that the plan uses the actual user inputs.
+7. Verify that the time limit is respected.
+8. Save the plan.
+9. Open the saved plan.
+10. Edit the Beauty Profile.
+11. Submit feedback.
+12. Log out.
+13. Log in again.
+14. Confirm that saved information remains available.
+15. Verify that one user cannot access another user's information.
+16. Verify the production build is compatible with GitHub and Vercel.
+
+Fix errors before declaring the application complete.
+
+# 24. FINAL DESIGN AND DEVELOPMENT PRIORITIES
+
+Prioritize in this order:
+
+1. A beautiful and distinctive GlamGuard brand identity.
+2. An excellent Beauty Rescue Plan experience.
+3. Relevant and genuinely personalized Gemini AI responses.
+4. Smooth onboarding.
+5. Reliable Firebase authentication.
+6. Persistent Firestore data.
+7. Easy navigation.
+8. Mobile responsiveness.
+9. Useful feedback collection.
+10. GitHub and Vercel deployment readiness.
+
+The GlamGuard typography must be distinctive, especially the Fraunces wordmark and display headings paired with Inter for the functional interface.
+
+The two signature colours must remain Raspberry Pink (#E84D79) and Deep Plum (#38243E).
+
+Do not leave unfinished screens, placeholder buttons, fake functionality or unnecessary features.
+
+**MOST IMPORTANT INSTRUCTION:**
+
+GlamGuard is a quick, affordable, personalized beauty assistant that helps women handle makeup, skin and hair concerns during real-life situations, especially long outings and humid weather in Kolkata.
+
+Build every feature and make every design decision support this central purpose.
+
+Generate the complete application automatically. Do not ask me to write code manually. If a configuration step requires my involvement, explain exactly where to click and what to do.

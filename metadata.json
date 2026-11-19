@@ -1,0 +1,6 @@
+{
+  "name": "GlamGuard",
+  "description": "Personalized, situation-based beauty rescue plans for skin, hair, and makeup — crafted for real-life outings and humid weather in Kolkata.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,299 @@
+{
+  "app": "DGU Venture Quest",
+  "exportVersion": "1.0",
+  "exportedAt": "2026-09-30T14:29:00.747Z",
+  "venture": {
+    "ventureName": "Glamguard",
+    "ventureIdea": "GlamGuard is a beauty-tech application designed to provide personalized, situation-based beauty solutions for people in Kolkata. Users enter their occasion, available time, skin or hair concern, makeup preferences and location. The application generates a customized “Beauty Rescue Plan” containing suitable makeup, skincare, haircare and quick-fix recommendations. It can also suggest nearby partner beauty service points and affordable beauty products. The venture is differentiated by adapting recommendations to Kolkata’s humid climate, local occasions such as Durga Puja and weddings, and the user's individual beauty profile.",
+    "currentMission": 12,
+    "unlockedMission": 12,
+    "completedMissions": [],
+    "completionPercentage": 0,
+    "assignment1Ready": false,
+    "assignment2Ready": false,
+    "createdAt": "2026-09-30T12:09:07.076Z",
+    "updatedAt": "2026-09-30T12:09:07.076Z",
+    "mission0": {
+      "ventureName": "Glamguard",
+      "ventureIdea": "GlamGuard is a beauty-tech application designed to provide personalized, situation-based beauty solutions for people in Kolkata. Users enter their occasion, available time, skin or hair concern, makeup preferences and location. The application generates a customized “Beauty Rescue Plan” containing suitable makeup, skincare, haircare and quick-fix recommendations. It can also suggest nearby partner beauty service points and affordable beauty products. The venture is differentiated by adapting recommendations to Kolkata’s humid climate, local occasions such as Durga Puja and weddings, and the user's individual beauty profile.",
+      "problemSolved": "Beauty consumers often face unexpected problems before or during important occasions, such as makeup melting, excessive oiliness, frizzy hair, dull skin or lack of time for a complete salon appointment. Existing beauty platforms mainly focus on product shopping or salon bookings rather than solving an immediate, situation-specific beauty problem. GlamGuard provides a quick and personalized solution by identifying the user's situation and generating an actionable beauty rescue plan based on their available time, concern, occasion and Kolkata's environmental conditions",
+      "initialCustomer": "Women aged 18–35 in Kolkata, particularly college students, young professionals, working women, wedding guests and frequent Durga Puja/event attendees who use makeup, skincare and haircare products.",
+      "geography": "Kolkata, West Bengal, initially focusing on New Town, Salt Lake, Park Street, Ballygunge, Gariahat and South Kolkata, with expansion to other parts of Kolkata based on user adoption.",
+      "whyChosen": "It is the kind of problem that I have experienced myself and I chose this idea because beauty problems are often situation-based rather than simply product-based. A person may know what beauty products they own but still not know what to use when they have limited time before an event. Kolkata's humid climate and strong culture of festivals, weddings and social events create additional beauty-maintenance challenges. I wanted to create a technology-based solution that provides personalized recommendations instead of simply selling products or booking salon appointments."
+    },
+    "mission1": {
+      "frictions": [
+        {
+          "id": "f-1",
+          "friction": "People struggle to maintain their makeup, hair and overall appearance during long outings in Kolkata, especially in humid weather and before festivals or social events. They often don't know which quick beauty solution to use for their specific situation and may not have enough time to visit a salon.",
+          "whoExperiences": "College students, young professionals and women aged 18–35 in Kolkata who regularly attend college, work, social events, weddings and Durga Puja celebrations.",
+          "whenOccurs": "During humid and hot weather, long commutes, outdoor activities and extended social events, particularly during Durga Puja, weddings, parties and other occasions where users need their appearance to remain fresh for several hours.",
+          "currentWorkaround": "Users carry makeup or skincare products with them, repeatedly touch up their makeup, search online for quick beauty tips, or visit a salon when they have enough time. Many simply tolerate the problem until they reach home.",
+          "whyWorkaroundUnsatisfactory": "These solutions are often time-consuming, require carrying multiple products and are not personalized to the user's specific skin, hair or occasion. Online advice can also be generic, while a salon visit may be unnecessary for a small beauty problem and can take too much time.",
+          "evidenceSource": "Initial personal observation and informal discussions with college students and young women about makeup, hair and skincare difficulties during long outings and humid weather in Kolkata.",
+          "evidenceStrength": "Moderate"
+        }
+      ],
+      "primaryFrictionId": "f-1",
+      "confidenceEvidenceNeeded": "Surveying at least 50–100 women aged 18–35 in Kolkata about their beauty-maintenance problems, preferred solutions, frequency of touch-ups, time available before events and willingness to use a personalized beauty-recommendation app. Conducting short interviews with users during or after long outdoor events would provide additional qualitative evidence."
+    },
+    "mission2": {
+      "functionalJob": "Quickly identify and fix makeup, skin or hair problems during a long outing or before an important event without needing a full salon appointment.",
+      "emotionalJob": "Feel confident, fresh and in control of my appearance instead of feeling stressed or self-conscious about how I look.",
+      "socialJob": "Look well-groomed and presentable around friends, colleagues and others at social occasions, festivals and events.",
+      "primaryJTBD": {
+        "situation": "When I am away from home for several hours in Kolkata, especially during humid weather or before a social event, and my makeup, skin or hair starts looking untidy...",
+        "motivationAction": "I want to quickly find a personalized beauty solution that suits my situation, available time and beauty needs...",
+        "desiredOutcome": "so that I can look fresh, presentable and confident without spending a lot of time or visiting a full-service salon."
+      },
+      "addressedFriction": "People struggle to maintain their makeup, hair and overall appearance during long outings in Kolkata, especially in humid weather and before festivals or social events. They often don't know which quick beauty solution to use for their specific situation and may not have enough time to visit a salon."
+    },
+    "mission3": {
+      "broadCustomerGroup": "Women aged 18–35 in Kolkata who use makeup, skincare and haircare products and regularly attend social, professional or festive occasions.",
+      "specificSegment": "College students and young working women who spend several hours away from home and experience makeup, skin or hair concerns during outings, especially in humid weather.",
+      "demographicsRole": "18–35 years; college students, postgraduate students and early-career working professionals.",
+      "geography": "Kolkata, initially focusing on Salt Lake, New Town, Park Street, Ballygunge, Gariahat and South Kolkata.",
+      "situationContext": "During long outings, commutes, shopping trips, festivals, weddings and social events when humidity, heat or extended wear affects their makeup, skin or hair.",
+      "buyingBehaviour": "Frequently use beauty and personal-care products, search online for beauty solutions, rely on peer recommendations and are comfortable using mobile apps and digital payments.",
+      "willingnessToPay": "Willing to spend approximately ₹50–₹300 per use for quick beauty solutions, personalized recommendations or convenient beauty services",
+      "reachStrategy": "Instagram, YouTube, beauty-content creators, college communities, WhatsApp groups, beauty stores, salons, cafés and QR codes at popular shopping and event locations.",
+      "beachheadSegment": "Female college students and young working women aged 18–30 in Kolkata who regularly attend Durga Puja, college events and social occasions and spend several hours outdoors, experiencing makeup, skin or hair problems due to humidity and limited access to quick beauty solutions"
+    },
+    "mission4": {
+      "customerPain": "Difficulty maintaining a fresh and presentable appearance during long outings because of humidity, heat and limited time for beauty touch-ups.",
+      "desiredGain": "A quick, personalized and practical beauty solution that helps them look fresh and confident without requiring a full salon visit.",
+      "productService": "GlamGuard is a mobile beauty assistant that provides personalized, situation-based beauty rescue plans based on the user's occasion, available time, skin/hair concerns and preferences, with recommendations for quick fixes, suitable products and nearby beauty services.",
+      "mainBenefit": "Personalized beauty guidance within minutes, helping users solve immediate makeup, skin and hair concerns quickly and conveniently",
+      "reasonToBelieve": "The recommendation system will use user-provided beauty preferences, occasion, available time and specific concerns to generate situation-based beauty solutions. The initial prototype can be tested with target users in Kolkata and refined using their feedback",
+      "reasonHasEvidence": false,
+      "cvpStatement": "For Female college students and young working women aged 18–30 in Kolkata who regularly attend Durga Puja, college events and social occasions and spend several hours outdoors, experiencing makeup, skin or hair problems due to humidity and limited access to quick beauty solutions, who struggles with Difficulty maintaining a fresh and presentable appearance during long outings because of humidity, heat and limited time for beauty touch-ups., our venture provides GlamGuard is a mobile beauty assistant that provides personalized, situation-based beauty rescue plans based on the user's occasion, available time, skin/hair concerns and preferences, with recommendations for quick fixes, suitable products and nearby beauty services. that delivers Personalized beauty guidance within minutes, helping users solve immediate makeup, skin and hair concerns quickly and conveniently, so that A quick, personalized and practical beauty solution that helps them look fresh and confident without requiring a full sal",
+      "whyChooseOverDoingNothing": "When an important event, social occasion or long outing is approaching, the desire to look presentable and feel confident makes a quick, personalized solution more valuable than simply ignoring the problem."
+    },
+    "mission5": {
+      "alternatives": [
+        {
+          "id": "alt-1",
+          "name": "Nykaa",
+          "type": "Indirect Competitor",
+          "priceCost": "Varies by product; typically ₹100–₹2,000+ depending on the product.",
+          "mainOffer": "Online beauty and personal-care marketplace offering makeup, skincare, haircare and beauty-related content and recommendations",
+          "mainStrength": "Very wide selection of beauty products and strong brand familiarity, allowing customers to purchase products immediately.",
+          "mainWeakness": "Users still need to identify what product or routine is appropriate for their immediate situation; the core experience is shopping rather than solving a specific real-time beauty problem.",
+          "evidenceSource": "Nykaa official website/product and skincare information pages.",
+          "evidenceStrength": "Strong",
+          "axisXScore": 5,
+          "axisYScore": 1
+        },
+        {
+          "id": "alt-2",
+          "name": "Purplle",
+          "type": "Indirect Competitor",
+          "priceCost": "Products range from approximately ₹100 to ₹2,000+ depending on the category and brand.",
+          "mainOffer": "Online beauty platform offering makeup, skincare, haircare and beauty products, along with beauty guidance and a Beauty Assistant feature.",
+          "mainStrength": "Large beauty-product selection combined with beauty-focused guidance and personalized product discovery.",
+          "mainWeakness": "The customer generally still needs to purchase and use products themselves; it is not primarily designed around an immediate, time-limited beauty emergency",
+          "evidenceSource": "Purplle official website, including its Makeup and Beauty Assistant pages.",
+          "evidenceStrength": "Strong",
+          "axisXScore": 6,
+          "axisYScore": 7
+        },
+        {
+          "id": "alt-3",
+          "name": "Urban Company – Beauty Services",
+          "type": "Substitute",
+          "priceCost": "Varies by service; individual services and packages can range from a few hundred rupees to several thousand rupees.",
+          "mainOffer": "At-home beauty services including salon services, facials, waxing, hair services, makeup, saree and styling services.",
+          "mainStrength": "Professional beauticians can provide hands-on beauty services at the customer's location, saving the customer a trip to a salon.",
+          "mainWeakness": "Requires booking and waiting for a professional, and may be unnecessary when the customer only needs a quick 5–20 minute beauty fix or simply needs guidance on what to do.",
+          "evidenceSource": "Urban Company official application and website",
+          "evidenceStrength": "Strong",
+          "axisXScore": 6,
+          "axisYScore": 8
+        }
+      ],
+      "axisXLabel": "Generic → Highly Personalized",
+      "axisYLabel": "Low Convenience → High Convenience",
+      "ventureAxisXScore": null,
+      "ventureAxisYScore": null,
+      "desiredAssociatedPosition": "GlamGuard should be associated with being a highly personalized and convenient beauty companion that quickly identifies what the customer needs in a specific situation and provides an actionable beauty solution"
+    },
+    "mission6": {
+      "targetCustomer": "Female college students and young working women aged 18–30 in Kolkata who regularly attend Durga Puja, college events and social occasions and spend several hours outdoors, experiencing makeup, skin or hair problems due to humidity and limited access to quick beauty solutions",
+      "category": "Personalized beauty-tech and on-the-go beauty assistance app",
+      "primaryBenefit": "Personalized beauty guidance within minutes, helping users solve immediate makeup, skin and hair concerns quickly and conveniently",
+      "mainAlternative": "Nykaa",
+      "mainDifferentiation": "Situation-based personalized beauty guidance that considers the user's occasion, available time, beauty concern and preferences to provide a quick, actionable solution.",
+      "reasonToBelieve": "The recommendation system will use user-provided beauty preferences, occasion, available time and specific concerns to generate situation-based beauty solutions. The initial prototype can be tested with target users in Kolkata and refined using their feedback",
+      "reasonHasEvidence": false,
+      "positioningStatement": "For Female college students and young working women aged 18–30 in Kolkata who regularly attend Durga Puja, college events and social occasions and spend several hours outdoors, experiencing makeup, skin or hair problems due to humidity and limited access to quick beauty solutions, Glamguard is a Personalized beauty-tech and on-the-go beauty assistance app that provides Personalized beauty guidance within minutes, helping users solve immediate makeup, skin and hair concerns quickly and conveniently, unlike Nykaa, because The recommendation system will use user-provided beauty preferences, occasion, available time and specific concerns to generate situation-based beauty solutions. The initial prototype can be tested with target users in Kolkata and refined using their feedback."
+    },
+    "mission7": {
+      "revenueModel": "Freemium + Paid",
+      "otherRevenueModel": "",
+      "sellingPrice": 99,
+      "variableCost": 15,
+      "monthlyFixedCost": 15000,
+      "expectedCustomers": 300,
+      "purchasesPerCustomer": 1,
+      "priceEvidenceSource": "Initial pricing assumption based on affordability for the target segment and comparison with low-cost digital subscription services; to be validated through customer willingness-to-pay surveys.",
+      "costEvidenceSource": "Preliminary estimates based on expected cloud/API usage, payment processing, software tools, app maintenance and small-scale digital marketing; to be validated during MVP testing.",
+      "scenarios": {
+        "conservative": {
+          "customers": 100,
+          "purchasesPerCustomer": 1,
+          "sellingPrice": 0,
+          "variableCost": 0,
+          "monthlyFixedCost": 0,
+          "notes": "Limited initial awareness, low conversion from free to paid users and reliance mainly on organic social media and word-of-mouth during the early launch stage"
+        },
+        "base": {
+          "customers": 300,
+          "purchasesPerCustomer": 1,
+          "sellingPrice": 0,
+          "variableCost": 0,
+          "monthlyFixedCost": 0,
+          "notes": "Moderate adoption through Instagram promotion, college communities, beauty-focused content and referrals, with a portion of free users converting to the ₹99 premium plan."
+        },
+        "ambitious": {
+          "customers": 700,
+          "purchasesPerCustomer": 1,
+          "sellingPrice": 0,
+          "variableCost": 0,
+          "monthlyFixedCost": 0,
+          "notes": "Strong adoption driven by influencer collaborations, college partnerships, referral campaigns and increased usage during Durga Puja, weddings and festive seasons."
+        }
+      }
+    },
+    "mission8": {
+      "totalPotentialCustomers": 500000,
+      "totalCustomersEvidence": "Estimated from Kolkata female population and Census age-sex data; the estimate requires further validation using current Kolkata demographic and beauty-app usage data.",
+      "annualSpendPerCustomer": 1188,
+      "annualSpendEvidence": "Derived from proposed GlamGuard premium subscription price of ₹99/month × 12 months.",
+      "serviceableCustomers": 150000,
+      "serviceableEvidence": "Planning estimate representing approximately 30% of the estimated TAM, focused on digitally active college students and young working women in the initial Kolkata target areas. To be validated through customer surveys and app-interest testing.",
+      "obtainableCustomers": 3600,
+      "obtainableEvidence": "Based on the base-case financial plan of acquiring approximately 300 paying customers per month during the first year through Instagram, college communities, referrals, beauty-content creators and local partnerships",
+      "mostUrgentAssumption": "Whether at least 300 customers per month can be converted into paying ₹99/month subscribers from the initial Kolkata target segment, and whether users perceive enough value in personalized beauty guidance to pay for the premium version."
+    },
+    "mission9": {
+      "firstCustomerSegment": "Female college students and young working women aged 18–30 in Kolkata who regularly attend social, festive and outdoor events and experience makeup, skin or hair problems during long outings.",
+      "coreMessage": "Makeup melting, hair getting frizzy or skin looking oily? Get a personalized beauty rescue plan in minutes with GlamGuard.",
+      "callToAction": "Scan the QR code or visit the GlamGuard MVP to get your personalized Beauty Rescue Plan.",
+      "reachLocations": "Instagram, college WhatsApp groups, college communities, beauty-content pages, cafés, salons and local beauty/fashion events in Kolkata.",
+      "channels": [
+        {
+          "id": "ch-1",
+          "channelName": "Instagram / Social Media",
+          "whyFitsCustomer": "The target customers regularly use Instagram for beauty, makeup, fashion and lifestyle content, making it suitable for reaching them through reels, stories, beauty tips and interactive polls.",
+          "budget": 3000,
+          "expectedLeads": 1000,
+          "expectedCustomers": 30,
+          "evidenceReason": ""
+        },
+        {
+          "id": "ch-1790776965121",
+          "channelName": "WhatsApp Communities",
+          "whyFitsCustomer": "College students and young professionals frequently use WhatsApp groups for college communities, events and peer recommendations, making it useful for direct and trusted word-of-mouth outreach.",
+          "budget": 500,
+          "expectedLeads": 500,
+          "expectedCustomers": 25,
+          "evidenceReason": ""
+        },
+        {
+          "id": "ch-1790777048256",
+          "channelName": "Partnerships",
+          "whyFitsCustomer": "Partnerships with colleges, cafés, salons and local beauty businesses can provide direct access to the target audience at locations where customers already discuss or purchase beauty-related products and services.",
+          "budget": 1500,
+          "expectedLeads": 500,
+          "expectedCustomers": 20,
+          "evidenceReason": ""
+        }
+      ],
+      "experiment30Days": {
+        "week1": {
+          "action": "Build the GlamGuard MVP, finalize the Beauty Rescue Plan flows, create Instagram content and prepare QR codes and WhatsApp promotional messages.",
+          "channel": "Instagram / Social Media and WhatsApp Communities",
+          "target": "Complete the MVP and prepare at least 10 beauty-problem scenarios with promotional content for the first 50 test users",
+          "metric": "MVP completion, number of scenarios created and number of test users recruited",
+          "responsibility": "Founder / Venture Lead",
+          "learningQuestion": "Do target users understand the GlamGuard concept and find the Beauty Rescue Plan useful for their immediate beauty problems?"
+        },
+        "week2": {
+          "action": "Launch the MVP with an initial group of college students and young working women and promote it through Instagram, WhatsApp communities and local partnerships",
+          "channel": "Instagram, WhatsApp Communities and Partnerships",
+          "target": "Reach 100 potential users and generate at least 40 MVP users, including at least 10 trial users interested in the premium version.",
+          "metric": "Outreach-to-MVP-user conversion rate and number of users completing a Beauty Rescue Plan.",
+          "responsibility": "Founder / Venture Lead",
+          "learningQuestion": "Which beauty problems and occasions generate the highest user interest and engagement?"
+        },
+        "week3": {
+          "action": "Collect user feedback, test willingness to pay ₹99/month and track repeat usage of the Beauty Rescue Plan.",
+          "channel": "In-app feedback, Instagram and WhatsApp follow-ups",
+          "target": "Collect feedback from at least 50 users and achieve at least 15 users willing to try the ₹99 premium plan.",
+          "metric": "Repeat usage rate, satisfaction score and willingness-to-pay conversion.",
+          "responsibility": "Customer Research Lead",
+          "learningQuestion": "Are users willing to pay ₹99/month for personalized beauty guidance, and which features influence their willingness to pay?"
+        },
+        "week4": {
+          "action": "Analyze user feedback and conversion data, improve the recommendation flow, remove low-value features and refine the ₹99 premium offering.",
+          "channel": "User feedback, Instagram analytics and WhatsApp follow-ups",
+          "target": "Document key customer insights and finalize an improved MVP roadmap based on feedback from at least 50 users.",
+          "metric": "User satisfaction, repeat usage, willingness to pay and conversion rate.",
+          "responsibility": "Founder / Venture Lead",
+          "learningQuestion": "Which features, beauty problems and customer segments should GlamGuard prioritize for the next launch cycle?"
+        }
+      }
+    },
+    "mission10": {
+      "coreAssumptionTested": "Will at least 15 out of 50 target users use a personalized Beauty Rescue Plan and show willingness to pay ₹99 per month for continued access?",
+      "features": [
+        {
+          "id": "feat-1",
+          "name": "Personalized Beauty Rescue Plan",
+          "customerNeedAddressed": "Need for a quick, personalized solution when makeup, skin or hair problems occur during an outing or before an event.",
+          "priority": "Must Have",
+          "whyNeeded": "Users may know they have a beauty problem but may not know which product, routine or quick fix is appropriate for their specific situation and available time.",
+          "evidenceReason": "The feature directly addresses the core customer friction identified during problem discovery: difficulty finding a quick and personalized beauty solution during long outings, especially in humid weather."
+        }
+      ],
+      "excludedFeatures": "Native iOS/Android app, live GPS tracking, real-time salon booking, product delivery, payment gateway, AI-based skin diagnosis, virtual makeup try-on, personalized product purchasing and advanced loyalty/rewards features.",
+      "mvpPurpose": "Validate whether users find personalized, situation-based beauty rescue plans useful enough to use repeatedly and consider paying ₹99 per month.",
+      "mvpCoreUser": "Female college students and young working women aged 18–30 in Kolkata who regularly attend Durga Puja, college events and social occasions and spend several hours outdoors, experiencing makeup, skin or hair problems due to humidity and limited access to quick beauty solutions",
+      "mvpCoreProblem": "People struggle to maintain their makeup, hair and overall appearance during long outings in Kolkata, especially in humid weather and before festivals or social events. They often don't know which quick beauty solution to use for their specific situation and may not have enough time to visit a salon.",
+      "successMetric": "At least 15 of 50 pilot users use the Beauty Rescue Plan and at least 30% indicate willingness to pay ₹99 per month."
+    },
+    "mission11": {
+      "topAssumptions": [
+        {
+          "id": "assump-1",
+          "assumption": "At least 30 out of 50 target users will find GlamGuard's personalized Beauty Rescue Plan useful and use it when facing a real beauty problem.",
+          "whyItMatters": "If users do not find the recommendations useful or relevant to their immediate beauty problems, they will not return to the app and the core value proposition will fail.",
+          "howToTest": "Give 50 target users access to the MVP and track whether they complete and use a Beauty Rescue Plan for a real or simulated beauty situation.",
+          "evidenceNeeded": "MVP usage records, completed Beauty Rescue Plans, user feedback ratings and repeat-use data from at least 50 target users."
+        },
+        {
+          "id": "assump-2",
+          "assumption": "At least 15 out of 50 target users will be willing to pay ₹99 per month for continued access to GlamGuard's personalized beauty guidance.",
+          "whyItMatters": "GlamGuard's revenue model depends on a ₹99 monthly premium subscription, so insufficient willingness to pay would require changes to pricing, features or the business model",
+          "howToTest": "Offer the MVP users a ₹99 premium trial or a clear paid-plan checkout/interest test and measure how many express genuine willingness to purchase.",
+          "evidenceNeeded": "Paid sign-ups or verified purchase intent, completed payment attempts and responses to a willingness-to-pay survey from at least 50 target users."
+        },
+        {
+          "id": "assump-3",
+          "assumption": "GlamGuard can acquire its initial target customers through Instagram, WhatsApp communities and local partnerships at a sustainable customer acquisition cost",
+          "whyItMatters": "Even if users value and are willing to pay for GlamGuard, the venture will not scale if reaching and converting customers costs more than the revenue generated from them",
+          "howToTest": "Run a 30-day acquisition experiment across Instagram, WhatsApp communities and partnerships and track outreach, MVP users, paid conversions and acquisition spending.",
+          "evidenceNeeded": "Channel-level outreach data, MVP sign-ups, paid conversions, campaign spending and calculated customer acquisition cost for each channel."
+        }
+      ]
+    },
+    "mission12": {
+      "reflectionNotes": "",
+      "finalizedAt": "2026-09-30T14:24:47.638Z",
+      "finalReviewCompleted": true
+    },
+    "assignment2": {
+      "appUrl": ""
+    }
+  }
+}
