@@ -65,7 +65,7 @@ service cloud.firestore {
         && data.uid == userId
         && isValidId(data.uid)
         && isBoundedString(data.name, 1, 100)
-        && isBoundedString(data.email, 3, 160)
+        && isBoundedString(data.email, 0, 160)
         && data.onboardingCompleted is bool
         && data.createdAt is timestamp
         && data.updatedAt is timestamp
@@ -175,6 +175,7 @@ service cloud.firestore {
         && isOwner(userId)
         && isValidUserProfile(incoming(), userId)
         && incoming().uid == existing().uid
+        && incoming().email == existing().email
         && incoming().createdAt == existing().createdAt
         && incoming().updatedAt == request.time
         && (
@@ -186,7 +187,7 @@ service cloud.firestore {
           ])
         );
 
-      allow delete: if false;
+      allow delete: if isValidId(userId) && isOwner(userId);
 
       // --- Saved Beauty Rescue Plans ---
       match /plans/{planId} {
@@ -208,7 +209,9 @@ service cloud.firestore {
           && incoming().createdAt == existing().createdAt
           && (
             // Action: Rate plan helpfulness
-            incoming().diff(existing()).affectedKeys().hasOnly(['feedbackRating'])
+            incoming().diff(existing()).affectedKeys().hasOnly(['feedbackRating']) ||
+            // Action: Rename saved plan title
+            incoming().diff(existing()).affectedKeys().hasOnly(['title'])
           );
 
         allow delete: if isValidId(userId) && isValidId(planId) && isOwner(userId);
@@ -226,8 +229,20 @@ service cloud.firestore {
           && incoming().createdAt == request.time
           && exists(/databases/$(database)/documents/users/$(userId));
 
-        allow update: if false;
-        allow delete: if false;
+        allow update: if isValidId(userId)
+          && isValidId(feedbackId)
+          && isOwner(userId)
+          && isValidFeedback(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && (
+            // Action: Edit submitted pilot feedback
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'usefulness', 'relevance', 'easeOfUse', 'timeFit', 'reuseIntent', 'writtenFeedback'
+            ])
+          );
+
+        allow delete: if isValidId(userId) && isValidId(feedbackId) && isOwner(userId);
       }
 
       // --- Willingness-to-Pay Validation Responses ---
@@ -242,8 +257,18 @@ service cloud.firestore {
           && incoming().createdAt == request.time
           && exists(/databases/$(database)/documents/users/$(userId));
 
-        allow update: if false;
-        allow delete: if false;
+        allow update: if isValidId(userId)
+          && isValidId(responseId)
+          && isOwner(userId)
+          && isValidPricingResponse(incoming(), userId)
+          && incoming().userId == existing().userId
+          && incoming().createdAt == existing().createdAt
+          && (
+            // Action: Update willingness-to-pay response
+            incoming().diff(existing()).affectedKeys().hasOnly(['willingnessToPay', 'response'])
+          );
+
+        allow delete: if isValidId(userId) && isValidId(responseId) && isOwner(userId);
       }
     }
   }

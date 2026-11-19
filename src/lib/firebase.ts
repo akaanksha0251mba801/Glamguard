@@ -10,8 +10,8 @@ import {
   getDocs,
   getFirestore,
   query,
+  runTransaction,
   serverTimestamp,
-  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -40,6 +40,7 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: "select_account" });
 
 export enum OperationType {
   CREATE = "create",
@@ -122,6 +123,13 @@ function sanitizeProducts(products: OwnedProduct[] | undefined): OwnedProduct[] 
     }));
 }
 
+const pendingProfileInits = new Map<string, Promise<UserProfile>>();
+
+function sanitizeDocId(id: string | undefined, fallback: string): string {
+  const cleaned = (id ?? "").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 128);
+  return cleaned.length > 0 ? cleaned : fallback;
+}
+
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   const path = `users/${uid}`;
   try {
@@ -133,34 +141,93 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   }
 }
 
+export async function ensureUserProfile(params: {
+  uid: string;
+  name: string;
+  email: string;
+  onboardingCompleted?: boolean;
+  preferExplicitName?: boolean;
+}): Promise<UserProfile> {
+  const existingInFlight = pendingProfileInits.get(params.uid);
+  const run = async (): Promise<UserProfile> => {
+    const path = `users/${params.uid}`;
+    const userRef = doc(db, "users", params.uid);
+    const safeName = clip(params.name || "GlamGuard User", 100) || "GlamGuard User";
+    const safeEmail = clip(params.email, 160);
+
+    try {
+      return await runTransaction(db, async (transaction) => {
+        const snap = await transaction.get(userRef);
+        if (!snap.exists()) {
+          const initialDoc: UserProfile = {
+            uid: params.uid,
+            name: safeName,
+            email: safeEmail,
+            ageRange: "",
+            location: "",
+            skinType: "",
+            hairType: "",
+            makeupPreference: "",
+            beautyConcerns: [],
+            budgetPreference: "Affordable",
+            existingProducts: [],
+            productPreferences: "",
+            onboardingCompleted: Boolean(params.onboardingCompleted),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          };
+          transaction.set(userRef, initialDoc);
+          return initialDoc;
+        }
+
+        const existingData = snap.data() as UserProfile;
+        if (params.preferExplicitName && safeName && existingData.name !== safeName) {
+          transaction.update(userRef, {
+            name: safeName,
+            updatedAt: serverTimestamp(),
+          });
+          return { ...existingData, name: safeName };
+        }
+        return existingData;
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, path);
+    }
+  };
+
+  // Serialize concurrent calls for the same UID so create/update never race
+  const nextPromise = existingInFlight ? existingInFlight.then(() => run(), () => run()) : run();
+  pendingProfileInits.set(params.uid, nextPromise);
+  try {
+    return await nextPromise;
+  } finally {
+    if (pendingProfileInits.get(params.uid) === nextPromise) {
+      pendingProfileInits.delete(params.uid);
+    }
+  }
+}
+
 export async function createUserProfile(params: {
   uid: string;
   name: string;
   email: string;
   onboardingCompleted?: boolean;
 }): Promise<void> {
-  const path = `users/${params.uid}`;
-  try {
-    await setDoc(doc(db, "users", params.uid), {
-      uid: params.uid,
-      name: clip(params.name || "GlamGuard User", 100),
-      email: clip(params.email, 160),
-      ageRange: "",
-      location: "",
-      skinType: "",
-      hairType: "",
-      makeupPreference: "",
-      beautyConcerns: [],
-      budgetPreference: "Affordable",
-      existingProducts: [],
-      productPreferences: "",
-      onboardingCompleted: Boolean(params.onboardingCompleted),
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-  } catch (error) {
-    handleFirestoreError(error, OperationType.CREATE, path);
-  }
+  await ensureUserProfile({
+    ...params,
+    preferExplicitName: Boolean(params.name?.trim()),
+  });
+}
+
+async function ensureAuthParentProfile(uid: string): Promise<void> {
+  const currentUser = auth.currentUser;
+  if (!currentUser || currentUser.uid !== uid) return;
+  await ensureUserProfile({
+    uid,
+    name: currentUser.displayName || currentUser.email?.split("@")[0] || "GlamGuard User",
+    email: currentUser.email || "",
+    onboardingCompleted: false,
+  });
 }
 
 export async function updateUserProfile(
@@ -168,6 +235,8 @@ export async function updateUserProfile(
   updates: Partial<Omit<UserProfile, "uid" | "email" | "createdAt" | "updatedAt">>
 ): Promise<void> {
   const path = `users/${uid}`;
+  await ensureAuthParentProfile(uid);
+
   const payload: Record<string, unknown> = {
     updatedAt: serverTimestamp(),
   };
@@ -181,7 +250,10 @@ export async function updateUserProfile(
     payload.makeupPreference = clip(updates.makeupPreference, 40);
   }
   if (updates.beautyConcerns !== undefined) {
-    payload.beautyConcerns = updates.beautyConcerns.slice(0, 15).map((c) => clip(c, 100));
+    payload.beautyConcerns = updates.beautyConcerns
+      .map((c) => clip(c, 100))
+      .filter((c) => c.length > 0)
+      .slice(0, 15);
   }
   if (updates.budgetPreference !== undefined) {
     payload.budgetPreference = clip(updates.budgetPreference, 40);
@@ -208,31 +280,54 @@ export async function saveRescuePlan(
   planData: Omit<SavedRescuePlan, "id" | "userId" | "createdAt">
 ): Promise<string> {
   const path = `users/${uid}/plans`;
+  await ensureAuthParentProfile(uid);
+
+  const safeSteps = (planData.generatedPlan.steps || []).slice(0, 15);
+  if (safeSteps.length === 0) {
+    safeSteps.push({
+      stepNumber: 1,
+      title: "Quick Refresh",
+      whatToDo: "Blot and tidy up lightly",
+      howToDoIt: "Use a clean tissue to gently blot shine and smooth flyaways.",
+      productUsed: "Clean tissue",
+      timeMinutes: 2,
+      whyItHelps: "Creates a clean, breathable base in minimal time.",
+    });
+  }
+
   try {
     const ref = await addDoc(collection(db, "users", uid, "plans"), {
       userId: uid,
-      title: clip(planData.title, 160),
-      occasion: clip(planData.occasion, 120),
-      concerns: (planData.concerns || []).slice(0, 20).map((c) => clip(c, 100)),
+      title: clip(planData.title, 160) || "Beauty Rescue Plan",
+      occasion: clip(planData.occasion, 120) || "Everyday outing",
+      concerns: (planData.concerns || [])
+        .map((c) => clip(c, 100))
+        .filter((c) => c.length > 0)
+        .slice(0, 20),
       customConcern: clip(planData.customConcern, 400),
-      availableTime: clip(planData.availableTime, 40),
-      availableMinutes: Number(planData.availableMinutes) || 10,
+      availableTime: clip(planData.availableTime, 40) || "10 minutes",
+      availableMinutes: Math.max(1, Math.min(120, Number(planData.availableMinutes) || 10)),
       situation: {
         environment: clip(planData.situation.environment, 60),
         weather: clip(planData.situation.weather, 60),
         awayFromHome: Boolean(planData.situation.awayFromHome),
         washroomAccess: Boolean(planData.situation.washroomAccess),
         hasProducts: Boolean(planData.situation.hasProducts),
-        productSource: planData.situation.productSource || "both",
+        productSource: clip(planData.situation.productSource || "both", 20) || "both",
       },
       generatedPlan: {
-        situationSummary: clip(planData.generatedPlan.situationSummary, 1200),
-        steps: (planData.generatedPlan.steps || []).slice(0, 15),
+        situationSummary:
+          clip(planData.generatedPlan.situationSummary, 1200) ||
+          "Personalized everyday Beauty Rescue Plan.",
+        steps: safeSteps,
         quickFixes: (planData.generatedPlan.quickFixes || []).slice(0, 10),
         productsThatMayHelp: (planData.generatedPlan.productsThatMayHelp || []).slice(0, 10),
-        whatToAvoid: (planData.generatedPlan.whatToAvoid || []).slice(0, 10),
+        whatToAvoid: (planData.generatedPlan.whatToAvoid || [])
+          .map((w) => clip(String(w), 300))
+          .filter((w) => w.length > 0)
+          .slice(0, 10),
         timeBreakdown: planData.generatedPlan.timeBreakdown,
-        finalTip: clip(planData.generatedPlan.finalTip, 600),
+        finalTip: clip(planData.generatedPlan.finalTip, 600) || "Keep layers light and breathable.",
         professionalNote: clip(planData.generatedPlan.professionalNote, 500),
       },
       feedbackRating: planData.feedbackRating ?? null,
@@ -305,15 +400,16 @@ export async function submitPlanFeedback(
   feedback: Omit<PlanFeedback, "id" | "userId" | "createdAt">
 ): Promise<string> {
   const path = `users/${uid}/feedback`;
+  await ensureAuthParentProfile(uid);
   try {
     const ref = await addDoc(collection(db, "users", uid, "feedback"), {
       userId: uid,
-      planId: clip(feedback.planId || "general_pilot", 128),
+      planId: sanitizeDocId(feedback.planId, "general_pilot"),
       usefulness: Math.max(1, Math.min(5, Number(feedback.usefulness) || 5)),
       relevance: Math.max(1, Math.min(5, Number(feedback.relevance) || 5)),
       easeOfUse: Math.max(1, Math.min(5, Number(feedback.easeOfUse) || 5)),
       timeFit: Boolean(feedback.timeFit),
-      reuseIntent: clip(feedback.reuseIntent || "yes", 40),
+      reuseIntent: clip(feedback.reuseIntent || "Yes, definitely", 40) || "Yes, definitely",
       writtenFeedback: clip(feedback.writtenFeedback, 1000),
       createdAt: serverTimestamp(),
     });
@@ -344,11 +440,12 @@ export async function submitPricingResponse(
   response: Omit<PricingResponse, "id" | "userId" | "proposedPrice" | "createdAt">
 ): Promise<string> {
   const path = `users/${uid}/pricingResponses`;
+  await ensureAuthParentProfile(uid);
   try {
     const ref = await addDoc(collection(db, "users", uid, "pricingResponses"), {
       userId: uid,
       proposedPrice: 99,
-      willingnessToPay: clip(response.willingnessToPay, 40),
+      willingnessToPay: clip(response.willingnessToPay, 40) || "maybe",
       response: clip(response.response, 600),
       createdAt: serverTimestamp(),
     });

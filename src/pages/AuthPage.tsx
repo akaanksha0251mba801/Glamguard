@@ -7,6 +7,8 @@ type AuthMode = "login" | "signup" | "forgot";
 
 function mapFirebaseAuthError(error: unknown): string {
   const code = (error as { code?: string })?.code || "";
+  const message = error instanceof Error ? error.message : String(error || "");
+
   switch (code) {
     case "auth/email-already-in-use":
       return "An account with this email already exists. Try logging in instead.";
@@ -21,10 +23,22 @@ function mapFirebaseAuthError(error: unknown): string {
     case "auth/too-many-requests":
       return "Too many attempts right now. Please wait a moment and try again.";
     case "auth/operation-not-allowed":
-      return "Email/Password sign-in needs to be enabled in Firebase Console (Authentication → Sign-in method → Email/Password → Enable). You can also continue with Google below.";
+    case "auth/admin-restricted-operation":
+      return "Email/Password sign-in is disabled in Firebase Console. Enable it under Authentication → Sign-in method → Email/Password, or use Continue with Google below.";
+    case "auth/unauthorized-domain":
+      return "This domain is not authorized in Firebase Auth yet. Add it under Firebase Console → Authentication → Settings → Authorized domains.";
+    case "auth/popup-blocked":
+      return "Your browser blocked the Google sign-in popup. Please allow popups for this site and try again.";
     case "auth/popup-closed-by-user":
       return "Google sign-in window was closed before completing.";
     default:
+      if (
+        code === "permission-denied" ||
+        message.includes("Missing or insufficient permissions") ||
+        message.includes("permission-denied")
+      ) {
+        return "Could not access your private Firestore profile due to security rule permissions. Please try again in a moment.";
+      }
       return error instanceof Error ? error.message : "Authentication failed. Please try again.";
   }
 }

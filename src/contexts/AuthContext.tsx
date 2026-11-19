@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -12,9 +12,8 @@ import {
 import { doc, onSnapshot } from "firebase/firestore";
 import {
   auth,
-  createUserProfile,
   db,
-  getUserProfile,
+  ensureUserProfile,
   googleProvider,
   handleFirestoreError,
   OperationType,
@@ -40,9 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
+  const pendingSignupNameRef = useRef<{ email: string; name: string } | null>(null);
 
   useEffect(() => {
     let unsubProfile: (() => void) | null = null;
+    let isMounted = true;
 
     const unsubAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (unsubProfile) {
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         unsubProfile = null;
       }
 
+      if (!isMounted) return;
       setUser(firebaseUser);
 
       if (!firebaseUser) {
@@ -63,20 +65,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthReady(true);
 
       const userPath = `users/${firebaseUser.uid}`;
+      const pending = pendingSignupNameRef.current;
+      const matchesPending =
+        pending &&
+        firebaseUser.email &&
+        pending.email.toLowerCase() === firebaseUser.email.toLowerCase();
+
+      const resolvedName =
+        (matchesPending ? pending.name : "") ||
+        firebaseUser.displayName ||
+        firebaseUser.email?.split("@")[0] ||
+        "GlamGuard User";
+
       try {
-        const existing = await getUserProfile(firebaseUser.uid);
-        if (!existing) {
-          await createUserProfile({
-            uid: firebaseUser.uid,
-            name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "GlamGuard User",
-            email: firebaseUser.email || "",
-            onboardingCompleted: false,
-          });
-        }
+        const ensured = await ensureUserProfile({
+          uid: firebaseUser.uid,
+          name: resolvedName,
+          email: firebaseUser.email || "",
+          onboardingCompleted: false,
+          preferExplicitName: Boolean(matchesPending),
+        });
+
+        if (!isMounted || auth.currentUser?.uid !== firebaseUser.uid) return;
+        setProfile(ensured);
 
         unsubProfile = onSnapshot(
           doc(db, "users", firebaseUser.uid),
           (snap) => {
+            if (!isMounted) return;
             if (snap.exists()) {
               setProfile(snap.data() as UserProfile);
             } else {
@@ -85,50 +101,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setProfileLoading(false);
           },
           (error) => {
+            if (!isMounted) return;
             setProfileLoading(false);
             handleFirestoreError(error, OperationType.GET, userPath);
           }
         );
       } catch (err) {
         console.error("Failed to initialize user profile:", err);
-        setProfileLoading(false);
+        if (isMounted) setProfileLoading(false);
       }
     });
 
     return () => {
+      isMounted = false;
       unsubAuth();
       if (unsubProfile) unsubProfile();
     };
   }, []);
 
   const signUpWithEmail = async (name: string, email: string, password: string) => {
-    const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-    await updateProfile(cred.user, { displayName: name.trim() });
-    await createUserProfile({
-      uid: cred.user.uid,
-      name: name.trim(),
-      email: email.trim(),
-      onboardingCompleted: false,
-    });
+    const trimmedEmail = email.trim();
+    const trimmedName = name.trim() || trimmedEmail.split("@")[0] || "GlamGuard User";
+    pendingSignupNameRef.current = { email: trimmedEmail, name: trimmedName };
+
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, trimmedEmail, password);
+      await updateProfile(cred.user, { displayName: trimmedName });
+      const ensured = await ensureUserProfile({
+        uid: cred.user.uid,
+        name: trimmedName,
+        email: cred.user.email || trimmedEmail,
+        onboardingCompleted: false,
+        preferExplicitName: true,
+      });
+      setProfile(ensured);
+    } finally {
+      pendingSignupNameRef.current = null;
+    }
   };
 
   const loginWithEmail = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email.trim(), password);
+    const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
+    const ensured = await ensureUserProfile({
+      uid: cred.user.uid,
+      name: cred.user.displayName || cred.user.email?.split("@")[0] || "GlamGuard User",
+      email: cred.user.email || email.trim(),
+      onboardingCompleted: false,
+    });
+    setProfile(ensured);
   };
 
   const loginWithGoogle = async (): Promise<{ isNewUser: boolean }> => {
     const cred = await signInWithPopup(auth, googleProvider);
-    const existing = await getUserProfile(cred.user.uid);
-    if (!existing) {
-      await createUserProfile({
-        uid: cred.user.uid,
-        name: cred.user.displayName || cred.user.email?.split("@")[0] || "GlamGuard User",
-        email: cred.user.email || "",
-        onboardingCompleted: false,
-      });
-      return { isNewUser: true };
-    }
-    return { isNewUser: !existing.onboardingCompleted };
+    const ensured = await ensureUserProfile({
+      uid: cred.user.uid,
+      name: cred.user.displayName || cred.user.email?.split("@")[0] || "GlamGuard User",
+      email: cred.user.email || "",
+      onboardingCompleted: false,
+    });
+    setProfile(ensured);
+    return { isNewUser: !ensured.onboardingCompleted };
   };
 
   const resetPassword = async (email: string) => {
