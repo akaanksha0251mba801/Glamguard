@@ -19,8 +19,8 @@ export default defineConfig(() => {
           if (error) {
             return;
           }
-          const distDir = path.resolve(__dirname, 'dist');
-          const srcAssets = path.resolve(__dirname, 'src/assets');
+          const distDir = path.resolve(import.meta.dirname, 'dist');
+          const srcAssets = path.resolve(import.meta.dirname, 'src/assets');
           const distAssets = path.resolve(distDir, 'src/assets');
           if (fs.existsSync(distDir) && fs.existsSync(srcAssets)) {
             fs.cpSync(srcAssets, distAssets, {recursive: true, force: true});
@@ -30,7 +30,52 @@ export default defineConfig(() => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(import.meta.dirname, '.'),
+      },
+    },
+    build: {
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            groups: [
+              {
+                name: 'react-vendor',
+                test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/,
+                priority: 30,
+              },
+              {
+                name: 'firebase-auth',
+                test: /node_modules[\\/](@firebase[\\/]auth|firebase[\\/]auth)[\\/]/,
+                priority: 25,
+              },
+              {
+                name: 'firebase-firestore',
+                test: /node_modules[\\/](@firebase[\\/]firestore|firebase[\\/]firestore)[\\/]/,
+                priority: 24,
+              },
+              {
+                name: 'firebase-core',
+                test: /node_modules[\\/](@?firebase)[\\/]/,
+                priority: 20,
+              },
+              {
+                name: 'ui-vendor',
+                test: /node_modules[\\/](lucide-react|motion|framer-motion)[\\/]/,
+                priority: 15,
+              },
+              {
+                name: 'pdf-vendor',
+                test: /node_modules[\\/](jspdf|fflate)[\\/]/,
+                priority: 16,
+              },
+              {
+                name: 'pdf-renderers',
+                test: /node_modules[\\/](html2canvas|canvg|dompurify|rgbcolor|stackblur-canvas|svg-pathdata)[\\/]/,
+                priority: 15,
+              },
+            ],
+          },
+        },
       },
     },
     server: {

@@ -5,7 +5,6 @@ import { AppShell } from "../components/AppShell";
 import { RescuePlanResultView } from "../components/RescuePlanResultView";
 import { useAuth } from "../contexts/AuthContext";
 import { deleteUserPlan, listUserPlans, rateUserPlan } from "../lib/firebase";
-import { exportRescuePlanPdf } from "../lib/pdfExport";
 import type { SavedRescuePlan } from "../types/glamguard";
 
 function formatDate(createdAt: unknown): string {
@@ -34,9 +33,10 @@ export function MyPlansPage() {
   const [deleting, setDeleting] = useState(false);
   const [downloadedPlanId, setDownloadedPlanId] = useState<string | null>(null);
 
-  const handleDownloadSavedPlan = (plan: SavedRescuePlan) => {
+  const handleDownloadSavedPlan = async (plan: SavedRescuePlan) => {
     setError("");
     try {
+      const { exportRescuePlanPdf } = await import("../lib/pdfExport");
       exportRescuePlanPdf({
         title: plan.title,
         occasion: plan.occasion,

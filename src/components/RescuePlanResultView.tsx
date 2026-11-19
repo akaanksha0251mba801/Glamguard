@@ -11,7 +11,6 @@ import {
   RotateCcw,
   Star,
 } from "lucide-react";
-import { exportRescuePlanPdf } from "../lib/pdfExport";
 import type { GeneratedRescuePlan, RescuePlanSituation } from "../types/glamguard";
 import { FeedbackModal } from "./FeedbackModal";
 import { PricingValidationCard } from "./PricingValidationCard";
@@ -59,9 +58,10 @@ export function RescuePlanResultView({
   const [pdfExported, setPdfExported] = useState(false);
   const [pdfError, setPdfError] = useState("");
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     setPdfError("");
     try {
+      const { exportRescuePlanPdf } = await import("../lib/pdfExport");
       exportRescuePlanPdf({
         title,
         occasion,
