@@ -1,30 +1,10 @@
-export interface KolkataWeatherData {
-  locationLabel: string;
-  temperatureC: number;
-  feelsLikeC: number;
-  humidityPercent: number;
-  precipitationMm: number;
-  weatherCode: number;
-  conditionLabel: string;
-  climatePreset: "Hot & humid" | "Warm & sweaty" | "Rainy / damp" | "Pleasant / dry";
-  beautyWeatherNote: string;
-  fetchedAt: string;
-  source: "open-meteo";
-}
-
-interface Coordinates {
-  lat: number;
-  lon: number;
-  label: string;
-}
-
-const DEFAULT_KOLKATA: Coordinates = {
+const DEFAULT_KOLKATA = {
   lat: 22.5726,
   lon: 88.3639,
   label: "Kolkata",
 };
 
-const AREA_COORDINATES: Array<{ match: string; coords: Coordinates }> = [
+const AREA_COORDINATES = [
   { match: "new town", coords: { lat: 22.5867, lon: 88.4772, label: "New Town, Kolkata" } },
   { match: "salt lake", coords: { lat: 22.5806, lon: 88.4177, label: "Salt Lake, Kolkata" } },
   { match: "sector v", coords: { lat: 22.5735, lon: 88.4331, label: "Sector V, Kolkata" } },
@@ -40,14 +20,14 @@ const AREA_COORDINATES: Array<{ match: string; coords: Coordinates }> = [
   { match: "dum dum", coords: { lat: 22.622, lon: 88.4177, label: "Dum Dum, Kolkata" } },
 ];
 
-function resolveKolkataCoords(area?: string): Coordinates {
+function resolveKolkataCoords(area) {
   if (!area || !area.trim()) return DEFAULT_KOLKATA;
   const normalized = area.toLowerCase();
   const matched = AREA_COORDINATES.find((entry) => normalized.includes(entry.match));
   return matched ? matched.coords : DEFAULT_KOLKATA;
 }
 
-function describeWmoCode(code: number): string {
+function describeWmoCode(code) {
   if (code === 0) return "Clear sky";
   if (code === 1) return "Mainly clear";
   if (code === 2) return "Partly cloudy";
@@ -60,14 +40,7 @@ function describeWmoCode(code: number): string {
   return "Humid & cloudy";
 }
 
-function deriveClimatePreset(params: {
-  temperatureC: number;
-  feelsLikeC: number;
-  humidityPercent: number;
-  precipitationMm: number;
-  weatherCode: number;
-}): KolkataWeatherData["climatePreset"] {
-  const { temperatureC, feelsLikeC, humidityPercent, precipitationMm, weatherCode } = params;
+function deriveClimatePreset({ temperatureC, feelsLikeC, humidityPercent, precipitationMm, weatherCode }) {
   const isRainyCode =
     (weatherCode >= 51 && weatherCode <= 67) ||
     (weatherCode >= 80 && weatherCode <= 82) ||
@@ -85,12 +58,7 @@ function deriveClimatePreset(params: {
   return "Pleasant / dry";
 }
 
-function buildBeautyWeatherNote(params: {
-  temperatureC: number;
-  humidityPercent: number;
-  preset: KolkataWeatherData["climatePreset"];
-}): string {
-  const { temperatureC, humidityPercent, preset } = params;
+function buildBeautyWeatherNote({ temperatureC, humidityPercent, preset }) {
   if (preset === "Rainy / damp") {
     return `Damp air at ${humidityPercent}% humidity—prioritize waterproof kajal/lip tints, gentle tissue blotting, and frizz control.`;
   }
@@ -106,15 +74,10 @@ function buildBeautyWeatherNote(params: {
   return `Comfortable ${temperatureC}°C and ${humidityPercent}% humidity—great for soft hydration and effortless touch-ups.`;
 }
 
-interface CacheEntry {
-  data: KolkataWeatherData;
-  expiresAt: number;
-}
-
-const WEATHER_CACHE = new Map<string, CacheEntry>();
+const WEATHER_CACHE = new Map();
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
-export async function fetchKolkataWeather(area?: string): Promise<KolkataWeatherData> {
+export async function fetchKolkataWeather(area) {
   const coords = resolveKolkataCoords(area);
   const cacheKey = `${coords.lat.toFixed(3)},${coords.lon.toFixed(3)}`;
   const cached = WEATHER_CACHE.get(cacheKey);
@@ -139,15 +102,7 @@ export async function fetchKolkataWeather(area?: string): Promise<KolkataWeather
     throw new Error(`Weather service responded with ${response.status}`);
   }
 
-  const payload = (await response.json()) as {
-    current?: {
-      temperature_2m?: number;
-      relative_humidity_2m?: number;
-      apparent_temperature?: number;
-      weather_code?: number;
-      precipitation?: number;
-    };
-  };
+  const payload = await response.json();
 
   if (!payload.current || typeof payload.current.temperature_2m !== "number") {
     throw new Error("Incomplete weather data received.");
@@ -168,7 +123,7 @@ export async function fetchKolkataWeather(area?: string): Promise<KolkataWeather
     weatherCode,
   });
 
-  const data: KolkataWeatherData = {
+  const data = {
     locationLabel: coords.label,
     temperatureC,
     feelsLikeC,

@@ -1,21 +1,16 @@
 import fs from "fs";
 import path from "path";
 import { GoogleGenAI, ThinkingLevel, Type } from "@google/genai";
-import { fetchKolkataWeather, type KolkataWeatherData } from "./kolkataWeather.js";
+import { fetchKolkataWeather } from "./kolkataWeather.js";
 
-function loadVentureContextSnippet(): string {
+function loadVentureContextSnippet() {
   try {
     const jsonPath = path.resolve(
       process.cwd(),
       "public/assets/aistudio/Glamguard_Backup_2026-09-30__1__168837fc.json"
     );
     if (!fs.existsSync(jsonPath)) return "";
-    const parsed = JSON.parse(fs.readFileSync(jsonPath, "utf-8")) as {
-      venture?: {
-        mission0?: { geography?: string; initialCustomer?: string };
-        mission2?: { primaryJTBD?: { desiredOutcome?: string } };
-      };
-    };
+    const parsed = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
     const geo = parsed.venture?.mission0?.geography || "";
     const audience = parsed.venture?.mission0?.initialCustomer || "";
     const outcome = parsed.venture?.mission2?.primaryJTBD?.desiredOutcome || "";
@@ -26,76 +21,6 @@ function loadVentureContextSnippet(): string {
 }
 
 const VENTURE_CONTEXT = loadVentureContextSnippet();
-
-export interface RescuePlanRequestBody {
-  occasion: string;
-  concerns: string[];
-  customConcern?: string;
-  availableTime: string;
-  availableMinutes: number;
-  situation: {
-    environment: string;
-    weather: string;
-    awayFromHome: boolean;
-    washroomAccess: boolean;
-    hasProducts: boolean;
-    productSource: "owned" | "affordable" | "both";
-  };
-  liveWeather?: KolkataWeatherData | null;
-  profile?: {
-    name?: string;
-    ageRange?: string;
-    location?: string;
-    skinType?: string;
-    hairType?: string;
-    makeupPreference?: string;
-    budgetPreference?: string;
-    productPreferences?: string;
-    existingProducts?: Array<{
-      id: string;
-      name: string;
-      category: string;
-      notes?: string;
-    }>;
-  };
-}
-
-export interface GeneratedRescuePlan {
-  situationSummary: string;
-  steps: Array<{
-    stepNumber: number;
-    title: string;
-    whatToDo: string;
-    howToDoIt: string;
-    productUsed: string;
-    timeMinutes: number;
-    whyItHelps: string;
-  }>;
-  quickFixes: Array<{
-    title: string;
-    instruction: string;
-    productUsed: string;
-    timeMinutes: number;
-  }>;
-  productsThatMayHelp: Array<{
-    productType: string;
-    whyItHelps: string;
-    affordabilityNote: string;
-    ownershipStatus: "Already owned" | "Optional affordable addition";
-  }>;
-  whatToAvoid: string[];
-  timeBreakdown: {
-    totalMinutes: number;
-    fitsWithinLimit: boolean;
-    summary: string;
-    perStep: Array<{
-      stepTitle: string;
-      minutes: number;
-    }>;
-  };
-  finalTip: string;
-  professionalNote: string;
-}
 
 const SYSTEM_INSTRUCTION = `You are GlamGuard, a practical, warm, and knowledgeable everyday beauty assistant designed specifically for young women aged 18–30 in Kolkata (college students, young working women, and commuters).
 
@@ -207,11 +132,11 @@ const RESPONSE_SCHEMA = {
   ],
 };
 
-function enforceTimeBudget(plan: GeneratedRescuePlan, availableMinutes: number): GeneratedRescuePlan {
+function enforceTimeBudget(plan, availableMinutes) {
   const safeLimit = Math.max(1, Math.min(120, Number(availableMinutes) || 10));
   const steps = Array.isArray(plan.steps) ? plan.steps.slice(0, 12) : [];
 
-  let rawTotal = steps.reduce((sum, step) => sum + Math.max(0.5, Number(step.timeMinutes) || 1), 0);
+  const rawTotal = steps.reduce((sum, step) => sum + Math.max(0.5, Number(step.timeMinutes) || 1), 0);
 
   const normalizedSteps = steps.map((step, index) => {
     const rawStepMin = Math.max(0.5, Number(step.timeMinutes) || 1);
@@ -226,12 +151,14 @@ function enforceTimeBudget(plan: GeneratedRescuePlan, availableMinutes: number):
     };
   });
 
-  // Final guard in case rounding pushed total slightly over safeLimit
   let finalTotal = normalizedSteps.reduce((sum, s) => sum + s.timeMinutes, 0);
   if (finalTotal > safeLimit && normalizedSteps.length > 0) {
     const ratio = safeLimit / finalTotal;
     for (let i = 0; i < normalizedSteps.length; i++) {
-      normalizedSteps[i].timeMinutes = Math.max(0.5, Math.floor(normalizedSteps[i].timeMinutes * ratio * 2) / 2);
+      normalizedSteps[i].timeMinutes = Math.max(
+        0.5,
+        Math.floor(normalizedSteps[i].timeMinutes * ratio * 2) / 2
+      );
     }
     finalTotal = normalizedSteps.reduce((sum, s) => sum + s.timeMinutes, 0);
   }
@@ -253,7 +180,7 @@ function enforceTimeBudget(plan: GeneratedRescuePlan, availableMinutes: number):
   };
 }
 
-export async function generateRescuePlan(input: RescuePlanRequestBody): Promise<GeneratedRescuePlan> {
+export async function generateRescuePlan(input) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
     throw new Error("GEMINI_API_KEY is not configured on the server.");
@@ -275,7 +202,7 @@ export async function generateRescuePlan(input: RescuePlanRequestBody): Promise<
           .join("\n")
       : "None listed";
 
-  let liveWeather: KolkataWeatherData | null = input.liveWeather ?? null;
+  let liveWeather = input.liveWeather ?? null;
   if (!liveWeather) {
     try {
       liveWeather = await fetchKolkataWeather(input.profile?.location);
@@ -299,7 +226,7 @@ export async function generateRescuePlan(input: RescuePlanRequestBody): Promise<
     awayFromHome: false,
     washroomAccess: true,
     hasProducts: true,
-    productSource: "both" as const,
+    productSource: "both",
   };
 
   const prompt = `Create a personalized Beauty Rescue Plan for this exact user request:
@@ -342,8 +269,8 @@ Remember:
 - Distinguish clearly between "Already owned" and "Optional affordable addition" in productsThatMayHelp.
 - Keep steps practical, specific, and tailored to Kolkata life.`;
 
-  let responseText: string | undefined;
-  let lastError: unknown;
+  let responseText;
+  let lastError;
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -395,9 +322,9 @@ Remember:
     throw new Error("Could not generate your Beauty Rescue Plan right now. Please retry.");
   }
 
-  let parsed: GeneratedRescuePlan;
+  let parsed;
   try {
-    parsed = JSON.parse(responseText) as GeneratedRescuePlan;
+    parsed = JSON.parse(responseText);
   } catch {
     throw new Error("Could not parse the generated Beauty Rescue Plan. Please retry.");
   }
