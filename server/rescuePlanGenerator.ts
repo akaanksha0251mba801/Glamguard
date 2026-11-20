@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { GoogleGenAI, ThinkingLevel, Type } from "@google/genai";
-import { fetchKolkataWeather, type KolkataWeatherData } from "./kolkataWeather.ts";
+import { fetchKolkataWeather, type KolkataWeatherData } from "./kolkataWeather.js";
 
 function loadVentureContextSnippet(): string {
   try {
@@ -292,23 +292,33 @@ export async function generateRescuePlan(input: RescuePlanRequestBody): Promise<
 - Climate takeaway: ${liveWeather.beautyWeatherNote}`
     : "";
 
+  const concerns = Array.isArray(input.concerns) ? input.concerns : [];
+  const situation = input.situation ?? {
+    environment: "Not specified",
+    weather: "Hot & humid",
+    awayFromHome: false,
+    washroomAccess: true,
+    hasProducts: true,
+    productSource: "both" as const,
+  };
+
   const prompt = `Create a personalized Beauty Rescue Plan for this exact user request:
 
 OCCASION: ${input.occasion}
-SELECTED BEAUTY CONCERNS: ${input.concerns.length > 0 ? input.concerns.join(", ") : "General refresh"}
+SELECTED BEAUTY CONCERNS: ${concerns.length > 0 ? concerns.join(", ") : "General refresh"}
 CUSTOM CONCERN DETAILS: ${input.customConcern?.trim() || "None specified"}
 STRICT TIME LIMIT: ${input.availableTime} (Maximum ${input.availableMinutes} minutes total — NEVER exceed ${input.availableMinutes} minutes)
 
 CURRENT SITUATION:
-- Environment: ${input.situation.environment || "Not specified"}
-- Weather / climate felt right now: ${input.situation.weather || "Not specified"}
-- Away from home: ${input.situation.awayFromHome ? "Yes" : "No"}
-- Washroom or mirror access: ${input.situation.washroomAccess ? "Yes" : "No (hands-free / minimal-mirror friendly steps needed)"}
-- Has beauty products with them right now: ${input.situation.hasProducts ? "Yes" : "No (focus on zero-product / basic tissue-and-water techniques)"}
+- Environment: ${situation.environment || "Not specified"}
+- Weather / climate felt right now: ${situation.weather || "Not specified"}
+- Away from home: ${situation.awayFromHome ? "Yes" : "No"}
+- Washroom or mirror access: ${situation.washroomAccess ? "Yes" : "No (hands-free / minimal-mirror friendly steps needed)"}
+- Has beauty products with them right now: ${situation.hasProducts ? "Yes" : "No (focus on zero-product / basic tissue-and-water techniques)"}
 - Recommendation preference: ${
-    input.situation.productSource === "owned"
+    situation.productSource === "owned"
       ? "Prioritize ONLY products the user already owns"
-      : input.situation.productSource === "affordable"
+      : situation.productSource === "affordable"
         ? "Suggest affordable accessible product types they could consider"
         : "Combine products the user already owns with optional affordable additions if helpful"
   }${liveWeatherSection}
@@ -362,11 +372,25 @@ Remember:
 
   if (!responseText) {
     const rawMsg = lastError instanceof Error ? lastError.message : String(lastError || "");
+    console.error("[rescuePlanGenerator] Gemini generation failed:", rawMsg);
+    if (rawMsg.includes("API_KEY_INVALID") || rawMsg.includes("API key not valid")) {
+      throw new Error(
+        "The configured Gemini API key was rejected. Please verify GEMINI_API_KEY in your server environment."
+      );
+    }
+    if (rawMsg.includes("PERMISSION_DENIED")) {
+      throw new Error(
+        "Gemini API access was denied for the configured key. Please verify GEMINI_API_KEY permissions."
+      );
+    }
+    if (rawMsg.includes("NOT_FOUND")) {
+      throw new Error("The requested Gemini model is currently unavailable for this API key.");
+    }
     if (rawMsg.includes("503") || rawMsg.includes("UNAVAILABLE")) {
       throw new Error("Our beauty assistant is momentarily busy. Please tap Retry in a few seconds.");
     }
     if (rawMsg.includes("429") || rawMsg.includes("RESOURCE_EXHAUSTED")) {
-      throw new Error("Daily AI request limit reached right now. Please try again shortly.");
+      throw new Error("AI request quota reached right now. Please try again shortly.");
     }
     throw new Error("Could not generate your Beauty Rescue Plan right now. Please retry.");
   }

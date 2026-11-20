@@ -13,6 +13,7 @@ import { AppShell } from "../components/AppShell";
 import { RescuePlanResultView } from "../components/RescuePlanResultView";
 import { useAuth } from "../contexts/AuthContext";
 import { rateUserPlan, saveRescuePlan } from "../lib/firebase";
+import { parseJsonResponse } from "../lib/apiClient";
 import { fetchKolkataLiveWeather } from "../lib/weather";
 import {
   HAIR_CONCERNS,
@@ -186,8 +187,11 @@ export function RescuePlanPage() {
         }),
       });
 
-      const data = (await response.json()) as { plan?: GeneratedRescuePlan; error?: string };
-      if (!response.ok || !data.plan) {
+      const data = await parseJsonResponse<{ plan?: GeneratedRescuePlan; error?: string }>(
+        response,
+        "Could not generate your Beauty Rescue Plan."
+      );
+      if (!data.plan) {
         throw new Error(data.error || "Could not generate your Beauty Rescue Plan.");
       }
       setGeneratedPlan(data.plan);

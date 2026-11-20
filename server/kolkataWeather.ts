@@ -132,7 +132,7 @@ export async function fetchKolkataWeather(area?: string): Promise<KolkataWeather
   url.searchParams.set("timezone", "Asia/Kolkata");
 
   const response = await fetch(url.toString(), {
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(5000),
   });
 
   if (!response.ok) {

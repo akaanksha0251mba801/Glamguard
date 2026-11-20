@@ -3,8 +3,8 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { fetchKolkataWeather } from "./server/kolkataWeather.ts";
-import { generateRescuePlan, type RescuePlanRequestBody } from "./server/rescuePlanGenerator.ts";
+import { fetchKolkataWeather } from "./server/kolkataWeather.js";
+import { generateRescuePlan, type RescuePlanRequestBody } from "./server/rescuePlanGenerator.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
